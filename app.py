@@ -25,11 +25,11 @@ def callback():
     #sendText(user,userText)
    if (userText == 'สวัสดี') :
         sendText(user,'สวัสดีจ้า')
-    elif(userText == 'ขอตังหน่อย') :
+   elif(userText == 'ขอตังหน่อย') :
         sendText(user,'ไม่ให้จ้า')
-    elif(userText == 'เสียใจนะ') :
+   elif(userText == 'เสียใจนะ') :
         sendText(user, 'เราไม่มีเงิน แบร่!!') 
-    elif :
+   elif :
         sendText(user, 'ไม่เข้าใจ') 
         
     return '',200
