@@ -1,4 +1,3 @@
-    
 """Flask App Project."""
 
 from flask import Flask, jsonify
