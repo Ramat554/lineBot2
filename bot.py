@@ -1,50 +1,54 @@
-from flask import Flask, jsonify, request
 import os
+from flask import Flask, request, abort, jsonify
 import json
-import requests
+
+from linebot import (
+    LineBotApi, WebhookHandler
+)
+from linebot.exceptions import (
+    InvalidSignatureError
+)
+from linebot.models import (
+    MessageEvent, TextMessage, TextSendMessage,
+)
 
 app = Flask(__name__)
 
-@app.route('/')
+line_bot_api = LineBotApi(os.environ['CHANNEL_ACCESS_TOKEN'])
+handler = WebhookHandler(os.environ['CHANNEL_SECRET'])
+
+@app.route("/")
 def index():
-    a=os.environ['Authorization']
-    return "นายราเมศ อยู่เจริญ เลขที่ 1 ชั้น ม.4/1"
+    return "Hello World สวัสดีชาวโลก"
 
-@app.route("/webhook", methods=['POST'])
-def webhook():
-    if request.method == 'POST':
-        return "OK"
-
-@app.route('/callback', methods=['POST'])
+@app.route("/callback", methods=['POST'])
 def callback():
-    json_line = request.get_json()
-    json_line = json.dumps(json_line)
-    decoded = json.loads(json_line)
-    user = decoded['originalDetectIntenRequest']['payload']['data']['replyToken']
-    userText = decoded['queryResult']['intent']['displayName']
-    #sendText(user,userText)
-    If (userText == 'สวัสดี') :
-        sendText(user,'สวัสดีจ้า')
-    elif(userText == 'ขอตังหน่อย') :
-        sendText(user,'ไม่ให้จ้า')
-    elif(userText == 'เสียใจนะ') :
-        sendText(user, 'เราไม่มีเงิน แบร่!!') 
-    elif :
-        sendText(user, 'ไม่เข้าใจ') 
-        
-    return '',200
+#    return "ok"
+    # get X-Line-Signature header value
+    signature = request.headers['X-Line-Signature']
 
-def sendText(user, text):
-  LINE_API = 'https://api.line.me/v2/bot/message/reply'
-  headers = {
-    'Content-Type': 'application/json; charset=UTF-8',
-    'Authorization': os.environ['Authorization']    # ตั้ง Config vars ใน heroku พร้อมค่า Access token
-  }
-  data = json.dumps({
-    "replyToken":user,
-    "messages":[{"type":"text","text":text}]
-  })
-  r = requests.post(LINE_API, headers=headers, data=data) # ส่งข้อมูล
+    # get request body as text
+    body = request.get_data(as_text=True)
+    app.logger.info("Request body: " + body)
 
-if __name__ == '__main__':
+    # handle webhook body
+    try:
+        handler.handle(body, signature)
+    except InvalidSignatureError:
+        print("Invalid signature. Please check your channel access token/channel secret.")
+        abort(400)
+
+    return 'OK'
+
+
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    line_bot_api.reply_message(
+        event.reply_token,
+#        TextSendMessage(text=event.message.text)
+        TextSendMessage(text="สบายดีไหม")
+    )
+
+
+if __name__ == "__main__":
     app.run()
