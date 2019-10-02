@@ -32,7 +32,7 @@ def callback():
     elif :
         sendText(user, 'ไม่เข้าใจ') 
         
-   return '',200
+    return '',200
 
 def sendText(user, text):
   LINE_API = 'https://api.line.me/v2/bot/message/reply'
