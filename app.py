@@ -31,7 +31,6 @@ def callback():
         sendText(user,'เราไม่มีเงิน แบร่!!') 
     elif :
         sendText(user, 'ไม่เข้าใจ') 
-        
     return '',200
 
 def sendText(user, text):
